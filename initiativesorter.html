@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numerical Data Processor</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #64748b;
+            --success: #16a34a;
+            --bg: #f8fafc;
+            --text: #1e293b;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        h2 {
+            margin: 0 0 1.5rem 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text);
+            text-align: center;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+
+        input {
+            flex: 1;
+            padding: 10px 16px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-add {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-add:hover { background-color: #1d4ed8; }
+
+        .preview-box {
+            background: #f1f5f9;
+            border-radius: 8px;
+            padding: 12px;
+            min-height: 48px;
+            max-height: 120px;
+            overflow-y: auto;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .chip {
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.875rem;
+        }
+
+        .control-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-outline {
+            background: white;
+            border: 1px solid #cbd5e1;
+            color: var(--text);
+        }
+
+        .btn-outline:hover {
+            background: #f8fafc;
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .result-section {
+            border-top: 1px solid #e2e8f0;
+            padding-top: 1.5rem;
+        }
+
+        .result-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--secondary);
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        #resultArea {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--success);
+            word-break: break-all;
+            line-height: 1.6;
+        }
+
+        .empty-msg { color: #94a3b8; font-size: 0.875rem; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Numerical Data Processor</h2>
+
+    <div class="input-group">
+        <input type="number" id="entry" placeholder="Enter number..." onkeypress="handleEnter(event)">
+        <button class="btn btn-add" onclick="addNumber()">Add</button>
+    </div>
+
+    <div class="preview-box" id="preview">
+        <span class="empty-msg">No data entries...</span>
+    </div>
+
+    <div class="control-grid">
+        <button class="btn btn-outline" onclick="processData('desc')">High to Low</button>
+        <button class="btn btn-outline" onclick="processData('asc')">Low to High</button>
+    </div>
+
+    <div class="result-section">
+        <span class="result-label" id="resultLabel">Output:</span>
+        <div id="resultArea">—</div>
+    </div>
+</div>
+
+<script>
+    let data = [];
+
+    function handleEnter(e) {
+        if (e.key === 'Enter') addNumber();
+    }
+
+    function addNumber() {
+        const input = document.getElementById('entry');
+        const val = parseFloat(input.value);
+
+        if (!isNaN(val)) {
+            data.push(val);
+            updatePreview();
+            input.value = '';
+            input.focus();
+        }
+    }
+
+    function updatePreview() {
+        const preview = document.getElementById('preview');
+        if (data.length === 0) {
+            preview.innerHTML = '<span class="empty-msg">No data entries...</span>';
+            return;
+        }
+        preview.innerHTML = data.map(n => `<span class="chip">${n}</span>`).join('');
+    }
+
+    function processData(mode) {
+        if (data.length === 0) return;
+
+        const sorted = [...data];
+        const label = document.getElementById('resultLabel');
+        
+        if (mode === 'desc') {
+            sorted.sort((a, b) => b - a);
+            label.innerText = "Output (Greatest to Least):";
+        } else {
+            sorted.sort((a, b) => a - b);
+            label.innerText = "Output (Least to Greatest):";
+        }
+
+        // Removed the arrows and used a comma-space separator instead
+        document.getElementById('resultArea').innerText = sorted.join(', ');
+    }
+</script>
+
+</body>
+</html>
