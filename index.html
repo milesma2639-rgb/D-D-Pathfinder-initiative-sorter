@@ -9,6 +9,7 @@
             --primary: #2563eb;
             --secondary: #64748b;
             --success: #16a34a;
+            --danger: #ef4444;
             --bg: #f8fafc;
             --text: #1e293b;
         }
@@ -90,12 +91,39 @@
             gap: 8px;
         }
 
+        /* The Chip Styling */
         .chip {
             background: white;
             border: 1px solid #e2e8f0;
             padding: 4px 10px;
             border-radius: 6px;
             font-size: 0.875rem;
+            position: relative;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s;
+            cursor: default;
+        }
+
+        /* The 'X' Delete Button */
+        .delete-btn {
+            display: none;
+            margin-left: 8px;
+            color: var(--danger);
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 12px;
+            line-height: 1;
+        }
+
+        /* Hover Effect: Change border color and show 'X' */
+        .chip:hover {
+            border-color: var(--danger);
+            padding-right: 8px;
+        }
+
+        .chip:hover .delete-btn {
+            display: inline-block;
         }
 
         .control-grid {
@@ -186,13 +214,26 @@
         }
     }
 
+    // New Function to delete a specific number
+    function deleteNumber(index) {
+        data.splice(index, 1); // Remove 1 item at the specific index
+        updatePreview();
+    }
+
     function updatePreview() {
         const preview = document.getElementById('preview');
         if (data.length === 0) {
             preview.innerHTML = '<span class="empty-msg">No data entries...</span>';
             return;
         }
-        preview.innerHTML = data.map(n => `<span class="chip">${n}</span>`).join('');
+        
+        // Map data to include a delete button with the current index
+        preview.innerHTML = data.map((n, index) => `
+            <div class="chip">
+                ${n}
+                <span class="delete-btn" onclick="deleteNumber(${index})">✕</span>
+            </div>
+        `).join('');
     }
 
     function processData(mode) {
@@ -209,7 +250,6 @@
             label.innerText = "Output (Least to Greatest):";
         }
 
-        // Removed the arrows and used a comma-space separator instead
         document.getElementById('resultArea').innerText = sorted.join(', ');
     }
 </script>
